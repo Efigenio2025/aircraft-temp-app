@@ -17,16 +17,16 @@ module.exports = async function (context, req) {
 
     const station = req.query.station || "OMA";
     const date = req.query.date || new Date().toISOString().slice(0, 10);
-    const partitionKey = \`\${station}-\${date}\`;
+    const partitionKey = `${station}-${date}`;
 
     const items = [];
-    const iterator = client.listEntities({
+    const entities = client.listEntities({
       queryOptions: {
-        filter: \`PartitionKey eq '\${partitionKey}'\`,
+        filter: `PartitionKey eq '${partitionKey}'`,
       },
     });
 
-    for await (const entity of iterator) {
+    for await (const entity of entities) {
       items.push({
         id: entity.rowKey,
         partitionKey: entity.partitionKey,
