@@ -26,33 +26,29 @@ module.exports = async function (context, req) {
       },
     });
 
-    for await (const entity of entities) {
+    for await (const e of entities) {
       items.push({
-        id: entity.rowKey,
-        partitionKey: entity.partitionKey,
-        tail: entity.Tail,
-        gate: entity.Gate,
-        heatSource: entity.HeatSource,
-        inTime: entity.InTime,
-        markedInAt: entity.MarkedInAt,
-        purgedDrained: entity.PurgedDrained,
-        purgedAt: entity.PurgedAt,
+        id: e.rowKey,
+        partitionKey: e.partitionKey,
+        tail: e.Tail,
+        gate: e.Gate,
+        heatSource: e.HeatSource,
+        inTime: e.InTime,
+        markedInAt: e.MarkedInAt,
+        purgedDrained: e.PurgedDrained,
+        purgedAt: e.PurgedAt,
       });
     }
 
     return {
       status: 200,
-      body: {
-        station,
-        date,
-        items,
-      },
+      body: { station, date, items },
     };
   } catch (err) {
-    context.log.error("Error in NightTailsGet:", err);
+    context.log.error("NightTailsGet Error", err);
     return {
       status: 500,
-      body: { error: "Failed to load tonight's aircraft." },
+      body: { error: "Failed to load night tails." },
     };
   }
 };
