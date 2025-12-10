@@ -8,10 +8,11 @@ module.exports = async function (context, req) {
   try {
     if (!connectionString) {
       context.log.error("Missing STORAGE_CONNECTION_STRING");
-      return {
+      context.res = {
         status: 500,
         body: { error: "Server storage not configured." },
       };
+      return;
     }
 
     const client = TableClient.fromConnectionString(connectionString, tableName);
@@ -26,10 +27,11 @@ module.exports = async function (context, req) {
     } = req.body || {};
 
     if (!tail) {
-      return {
+      context.res = {
         status: 400,
         body: { error: "tail is required." },
       };
+      return;
     }
 
     const now = new Date();
@@ -51,7 +53,7 @@ module.exports = async function (context, req) {
 
     await client.createEntity(entity);
 
-    return {
+    context.res = {
       status: 201,
       body: {
         id: rowKey,
@@ -67,7 +69,7 @@ module.exports = async function (context, req) {
     };
   } catch (err) {
     context.log.error("Error in NightTailsCreate:", err);
-    return {
+    context.res = {
       status: 500,
       body: { error: "Failed to create night tail." },
     };
