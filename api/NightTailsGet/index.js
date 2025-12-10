@@ -7,10 +7,11 @@ module.exports = async function (context, req) {
   try {
     if (!connectionString) {
       context.log.error("Missing STORAGE_CONNECTION_STRING");
-      return {
+      context.res = {
         status: 500,
         body: { error: "Server storage not configured." },
       };
+      return;
     }
 
     const client = TableClient.fromConnectionString(connectionString, tableName);
@@ -40,13 +41,13 @@ module.exports = async function (context, req) {
       });
     }
 
-    return {
+    context.res = {
       status: 200,
       body: { station, date, items },
     };
   } catch (err) {
     context.log.error("NightTailsGet Error", err);
-    return {
+    context.res = {
       status: 500,
       body: { error: "Failed to load night tails." },
     };

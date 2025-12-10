@@ -7,10 +7,11 @@ module.exports = async function (context, req) {
   try {
     if (!connectionString) {
       context.log.error("Missing STORAGE_CONNECTION_STRING");
-      return {
+      context.res = {
         status: 500,
         body: { error: "Server storage not configured." },
       };
+      return;
     }
 
     const client = TableClient.fromConnectionString(connectionString, tableName);
@@ -42,7 +43,7 @@ module.exports = async function (context, req) {
 
     items.sort((a, b) => (a.time || "").localeCompare(b.time || "")).reverse();
 
-    return {
+    context.res = {
       status: 200,
       body: {
         station,
@@ -52,7 +53,7 @@ module.exports = async function (context, req) {
     };
   } catch (err) {
     context.log.error("Error in TempLogsGetTonight:", err);
-    return {
+    context.res = {
       status: 500,
       body: { error: "Failed to load temp logs." },
     };
