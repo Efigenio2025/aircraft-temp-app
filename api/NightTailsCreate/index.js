@@ -36,7 +36,7 @@ module.exports = async function (context, req) {
 
     const now = new Date();
     const dateStr = dateOverride || now.toISOString().slice(0, 10);
-    const partitionKey = \`\${station}-\${dateStr}\`;
+    const partitionKey = `${station}-${dateStr}`;
     const rowKey = uuidv4();
 
     const entity = {
