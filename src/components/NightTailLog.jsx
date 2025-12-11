@@ -50,23 +50,23 @@ export function NightTailLog({
       {/* Header */}
       <header className="flex flex-col md:flex-row md:items-center md:justify-between gap-2">
         <div>
-          <h1 className="text-xl font-semibold text-slate-50">
+          <h1 className="text-xl font-semibold text-cyan-50">
             Tonight&apos;s Aircraft
           </h1>
-          <p className="text-xs text-slate-400">
+          <p className="text-xs text-cyan-100/70">
             Build the overnight plan: tails, gates, heat sources, purge/ drain
             status.
           </p>
         </div>
         <div className="flex items-center gap-2 text-[11px]">
-          <span className="rounded-full border border-slate-700 px-3 py-1 text-slate-400">
+          <span className="rounded-full border border-cyan-900/60 bg-slate-950/60 px-3 py-1 text-cyan-100/80">
             Tails logged: {nightTails.length}
           </span>
           {nightTails.length > 0 && (
             <button
               type="button"
               onClick={onClearAll}
-              className="rounded-lg border border-rose-500/70 px-3 py-1.5 text-rose-200 text-xs hover:bg-rose-500/10"
+              className="rounded-lg border border-rose-500/70 px-3 py-1.5 text-rose-100 text-xs hover:bg-rose-500/10"
             >
               Clear tonight&apos;s list
             </button>
@@ -77,13 +77,13 @@ export function NightTailLog({
       {/* Entry form */}
       <form
         onSubmit={handleSubmit}
-        className="rounded-2xl border border-slate-800 bg-slate-900/80 p-4 space-y-3"
+        className="glacier-panel p-4 space-y-3"
       >
         {/* Row 1: Tail / Flight / Gate / ETA */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
           {/* Tail */}
           <div className="space-y-1">
-            <label className="text-xs font-medium text-slate-300">
+            <label className="text-xs font-medium text-cyan-100/90">
               Tail Number *
             </label>
             <input
@@ -91,13 +91,13 @@ export function NightTailLog({
               placeholder="N123AB"
               value={tailNumber}
               onChange={(e) => setTailNumber(e.target.value)}
-              className="w-full rounded-xl bg-slate-950/60 border border-slate-700 px-3 py-2 text-xs md:text-sm text-slate-50 placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-sky-500/70"
+              className="glacier-input"
             />
           </div>
 
           {/* Flight */}
           <div className="space-y-1">
-            <label className="text-xs font-medium text-slate-300">
+            <label className="text-xs font-medium text-cyan-100/90">
               Flight #
             </label>
             <input
@@ -105,19 +105,19 @@ export function NightTailLog({
               placeholder="AA1234"
               value={flightNumber}
               onChange={(e) => setFlightNumber(e.target.value)}
-              className="w-full rounded-xl bg-slate-950/60 border border-slate-700 px-3 py-2 text-xs md:text-sm text-slate-50 placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-sky-500/70"
+              className="glacier-input"
             />
           </div>
 
           {/* Gate / Parking */}
           <div className="space-y-1">
-            <label className="text-xs font-medium text-slate-300">
+            <label className="text-xs font-medium text-cyan-100/90">
               Gate / Parking
             </label>
             <select
               value={gate}
               onChange={(e) => setGate(e.target.value)}
-              className="w-full rounded-xl bg-slate-950/60 border border-slate-700 px-3 py-2 text-xs md:text-sm text-slate-50 focus:outline-none focus:ring-2 focus:ring-sky-500/70"
+              className="glacier-input"
             >
               <option value="">Select location…</option>
               <option value="A6">A6</option>
@@ -133,7 +133,7 @@ export function NightTailLog({
 
           {/* Planned time / ETA */}
           <div className="space-y-1">
-            <label className="text-xs font-medium text-slate-300">
+            <label className="text-xs font-medium text-cyan-100/90">
               Planned Time (ETA)
             </label>
             <input
@@ -141,7 +141,7 @@ export function NightTailLog({
               placeholder="21:35 / 9:35 PM"
               value={eta}
               onChange={(e) => setEta(e.target.value)}
-              className="w-full rounded-xl bg-slate-950/60 border border-slate-700 px-3 py-2 text-xs md:text-sm text-slate-50 placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-sky-500/70"
+              className="glacier-input"
             />
           </div>
         </div>
@@ -150,13 +150,13 @@ export function NightTailLog({
         <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
           {/* Heat Source (equipment IDs) */}
           <div className="space-y-1">
-            <label className="text-xs font-medium text-slate-300">
+            <label className="text-xs font-medium text-cyan-100/90">
               Heat Source
             </label>
             <select
               value={heatSource}
               onChange={(e) => setHeatSource(e.target.value)}
-              className="w-full rounded-xl bg-slate-950/60 border border-slate-700 px-3 py-2 text-xs md:text-sm text-slate-50 focus:outline-none focus:ring-2 focus:ring-sky-500/70"
+              className="glacier-input"
             >
               <option value="">Select…</option>
               <option value="AC0066">AC0066</option>
@@ -172,13 +172,13 @@ export function NightTailLog({
 
           {/* Purged & Drained */}
           <div className="space-y-1">
-            <label className="text-xs font-medium text-slate-300">
+            <label className="text-xs font-medium text-cyan-100/90">
               Purged &amp; Drained
             </label>
             <select
               value={purgedDrained}
               onChange={(e) => setPurgedDrained(e.target.value)}
-              className="w-full rounded-xl bg-slate-950/60 border border-slate-700 px-3 py-2 text-xs md:text-sm text-slate-50 focus:outline-none focus:ring-2 focus:ring-sky-500/70"
+              className="glacier-input"
             >
               <option value="">Select…</option>
               <option value="Yes">Yes</option>
@@ -190,13 +190,13 @@ export function NightTailLog({
 
         {/* Notes */}
         <div className="space-y-1">
-          <label className="text-xs font-medium text-slate-300">Notes</label>
+          <label className="text-xs font-medium text-cyan-100/90">Notes</label>
           <textarea
             rows={2}
             placeholder="Crew notes, long turn, MEL, special handling…"
             value={notes}
             onChange={(e) => setNotes(e.target.value)}
-            className="w-full rounded-xl bg-slate-950/60 border border-slate-700 px-3 py-2 text-xs text-slate-50 placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-sky-500/70"
+            className="glacier-input"
           />
         </div>
 
@@ -204,7 +204,7 @@ export function NightTailLog({
         <div className="flex justify-end">
           <button
             type="submit"
-            className="rounded-xl bg-sky-500 px-4 py-2.5 text-xs md:text-sm font-semibold text-slate-950 shadow-lg shadow-sky-500/30 hover:bg-sky-400 active:scale-[0.99] transition"
+            className="rounded-xl bg-cyan-300 px-4 py-2.5 text-xs md:text-sm font-semibold text-slate-950 shadow-lg shadow-cyan-500/30 hover:bg-cyan-200 active:scale-[0.99] transition"
           >
             Add Tail to Tonight&apos;s List
           </button>
@@ -212,17 +212,17 @@ export function NightTailLog({
       </form>
 
       {/* Table of tonight's tails */}
-      <section className="rounded-2xl border border-slate-800 bg-slate-900/80 p-4">
+      <section className="glacier-panel p-4">
         <div className="flex items-center justify-between mb-2">
-          <h2 className="text-sm font-semibold">Tonight&apos;s Tail List</h2>
-          <span className="text-[11px] text-slate-500">
+          <h2 className="text-sm font-semibold text-cyan-50">Tonight&apos;s Tail List</h2>
+          <span className="text-[11px] text-cyan-100/70">
             Mark in-time and jump to temp logging per aircraft.
           </span>
         </div>
 
         <div className="overflow-x-auto">
           <table className="min-w-full text-[11px] text-left">
-            <thead className="border-b border-slate-800 text-slate-400">
+            <thead className="border-b border-cyan-900/60 text-cyan-100/70">
               <tr>
                 <th className="py-2 pr-3">Tail</th>
                 <th className="py-2 pr-3 hidden md:table-cell">Flight</th>
@@ -236,20 +236,20 @@ export function NightTailLog({
               </tr>
             </thead>
 
-            <tbody className="divide-y divide-slate-800">
+            <tbody className="divide-y divide-cyan-900/60">
               {nightTails.length === 0 ? (
                 <tr>
                   <td
                     colSpan={9}
-                    className="py-4 text-center text-[11px] text-slate-500"
+                    className="py-4 text-center text-[11px] text-cyan-100/70"
                   >
                     No tails logged for tonight yet.
                   </td>
                 </tr>
               ) : (
                 nightTails.map((item) => (
-                  <tr key={item.id} className="hover:bg-slate-800/40">
-                    <td className="py-2 pr-3 text-slate-100">{item.tail}</td>
+                  <tr key={item.id} className="hover:bg-slate-900/50">
+                    <td className="py-2 pr-3 text-cyan-50">{item.tail}</td>
                     <td className="py-2 pr-3 hidden md:table-cell">
                       {item.flight || "—"}
                     </td>
@@ -267,7 +267,7 @@ export function NightTailLog({
                         : item.purgedDrained || "—"}
                     </td>
                     <td className="py-2 pr-3">{item.eta || "—"}</td>
-                    <td className="py-2 pr-3 text-slate-300">
+                    <td className="py-2 pr-3 text-cyan-100/80">
                       {item.inTime || "Waiting"}
                     </td>
                     <td className="py-2 pr-3">
@@ -284,14 +284,14 @@ export function NightTailLog({
                     <td className="py-2">
                       <div className="flex flex-col gap-1">
                         {item.inTime ? (
-                          <span className="text-[11px] text-slate-500">
+                          <span className="text-[11px] text-cyan-100/70">
                             In-time logged
                           </span>
                         ) : (
                           <button
                             type="button"
                             onClick={() => onMarkArrived?.(item.id)}
-                            className="rounded-full bg-emerald-500/90 px-3 py-1 text-[11px] font-medium text-slate-950 hover:bg-emerald-400"
+                            className="rounded-full bg-emerald-400 px-3 py-1 text-[11px] font-medium text-slate-950 hover:bg-emerald-300"
                           >
                             Mark In (Now)
                           </button>
@@ -300,7 +300,7 @@ export function NightTailLog({
                         <button
                           type="button"
                           onClick={() => onLogTemp?.(item.tail)}
-                          className="rounded-full bg-sky-500/90 px-3 py-1 text-[11px] font-medium text-slate-950 hover:bg-sky-400"
+                          className="rounded-full bg-cyan-300 px-3 py-1 text-[11px] font-medium text-slate-950 hover:bg-cyan-200"
                         >
                           Log Temp
                         </button>
