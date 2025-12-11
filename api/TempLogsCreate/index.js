@@ -1,13 +1,12 @@
 const { TableClient } = require("@azure/data-tables");
 const { v4: uuidv4 } = require("uuid");
-
-const connectionString = process.env.STORAGE_CONNECTION_STRING;
+const { getConnectionString } = require("../shared/getConnectionString");
 const tableName = "TempLogs";
 
 module.exports = async function (context, req) {
   try {
+    const connectionString = getConnectionString(context);
     if (!connectionString) {
-      context.log.error("Missing STORAGE_CONNECTION_STRING");
       context.res = {
         status: 500,
         body: { error: "Server storage not configured." },

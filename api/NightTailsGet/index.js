@@ -1,7 +1,9 @@
-module.exports = async function (context, req) {
+const { getConnectionString } = require("../shared/getConnectionString");
+
+module.exports = async function (context) {
   context.log("NightTailsGet test function hit.");
 
-  const hasConnectionString = !!process.env.STORAGE_CONNECTION_STRING;
+  const hasConnectionString = !!getConnectionString(context);
 
   return {
     status: 200,
