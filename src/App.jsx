@@ -135,45 +135,45 @@ export default function App() {
   }
 
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-50">
+    <div className="min-h-screen text-slate-50 bg-gradient-to-b from-slate-950/90 via-slate-900/80 to-slate-950">
       {/* Simple top nav */}
-      <nav className="border-b border-slate-800 bg-slate-950/80 backdrop-blur-sm">
+      <nav className="border-b border-cyan-900/60 bg-slate-950/70 backdrop-blur-md shadow-lg shadow-cyan-900/30">
         <div className="max-w-6xl mx-auto px-4 py-3 flex flex-col gap-2 md:flex-row md:items-center md:justify-between">
-          <div className="flex items-baseline gap-2">
+          <div className="flex items-baseline gap-2 text-cyan-100">
             <span className="text-sm font-semibold tracking-tight">
               OMA · Cabin Temps
             </span>
-            <span className="text-[11px] text-slate-500">
+            <span className="text-[11px] text-cyan-300/80">
               Temperature &amp; Tail Tracking
             </span>
           </div>
           <div className="flex flex-wrap gap-2 text-xs">
             <button
               onClick={() => setView("log")}
-              className={`px-3 py-1.5 rounded-full border text-xs ${
+              className={`px-3 py-1.5 rounded-full border text-xs transition ${
                 view === "log"
-                  ? "bg-sky-500 text-slate-950 border-sky-500"
-                  : "bg-slate-900 border-slate-700 text-slate-300 hover:bg-slate-800"
+                  ? "bg-cyan-300 text-slate-950 border-cyan-100 shadow-lg shadow-cyan-500/30"
+                  : "bg-slate-900/70 border-cyan-900/60 text-slate-200 hover:bg-slate-900/90"
               }`}
             >
               Log Temperature
             </button>
             <button
               onClick={() => setView("dashboard")}
-              className={`px-3 py-1.5 rounded-full border text-xs ${
+              className={`px-3 py-1.5 rounded-full border text-xs transition ${
                 view === "dashboard"
-                  ? "bg-sky-500 text-slate-950 border-sky-500"
-                  : "bg-slate-900 border-slate-700 text-slate-300 hover:bg-slate-800"
+                  ? "bg-cyan-300 text-slate-950 border-cyan-100 shadow-lg shadow-cyan-500/30"
+                  : "bg-slate-900/70 border-cyan-900/60 text-slate-200 hover:bg-slate-900/90"
               }`}
             >
               Dashboard
             </button>
             <button
               onClick={() => setView("night")}
-              className={`px-3 py-1.5 rounded-full border text-xs ${
+              className={`px-3 py-1.5 rounded-full border text-xs transition ${
                 view === "night"
-                  ? "bg-sky-500 text-slate-950 border-sky-500"
-                  : "bg-slate-900 border-slate-700 text-slate-300 hover:bg-slate-800"
+                  ? "bg-cyan-300 text-slate-950 border-cyan-100 shadow-lg shadow-cyan-500/30"
+                  : "bg-slate-900/70 border-cyan-900/60 text-slate-200 hover:bg-slate-900/90"
               }`}
             >
               Tonight&apos;s Aircraft
