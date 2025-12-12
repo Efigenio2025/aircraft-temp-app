@@ -1,4 +1,18 @@
-import { supabase, DEFAULT_STATION, getTodayDateString } from "../supabaseClient.js";
+import {
+  supabase,
+  supabaseAvailable,
+  DEFAULT_STATION,
+  getTodayDateString,
+} from "../supabaseClient.js";
+
+function requireSupabase() {
+  if (!supabaseAvailable || !supabase) {
+    throw new Error(
+      "Supabase is not configured. Provide VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY to enable Supabase features."
+    );
+  }
+  return supabase;
+}
 
 export async function insertNightTail({
   tailNumber,
@@ -6,6 +20,7 @@ export async function insertNightTail({
   heatSource,
   drained = false,
 }) {
+  const client = requireSupabase();
   const payload = {
     station: DEFAULT_STATION,
     night_date: getTodayDateString(),
@@ -15,7 +30,7 @@ export async function insertNightTail({
     drained,
   };
 
-  const { data, error } = await supabase
+  const { data, error } = await client
     .from("night_tails")
     .insert(payload)
     .select()
@@ -26,7 +41,8 @@ export async function insertNightTail({
 }
 
 export async function fetchTonightNightTails() {
-  const { data, error } = await supabase
+  const client = requireSupabase();
+  const { data, error } = await client
     .from("night_tails")
     .select("*")
     .eq("station", DEFAULT_STATION)
@@ -38,7 +54,8 @@ export async function fetchTonightNightTails() {
 }
 
 export async function updateMarkedInAt(id) {
-  const { data, error } = await supabase
+  const client = requireSupabase();
+  const { data, error } = await client
     .from("night_tails")
     .update({ marked_in_at: new Date().toISOString() })
     .eq("id", id)
@@ -50,7 +67,8 @@ export async function updateMarkedInAt(id) {
 }
 
 export async function updatePurgedAt(id) {
-  const { data, error } = await supabase
+  const client = requireSupabase();
+  const { data, error } = await client
     .from("night_tails")
     .update({ purged_at: new Date().toISOString() })
     .eq("id", id)
@@ -62,6 +80,7 @@ export async function updatePurgedAt(id) {
 }
 
 export async function insertTemperatureLog({ tailNumber, tempF }) {
+  const client = requireSupabase();
   const payload = {
     station: DEFAULT_STATION,
     night_date: getTodayDateString(),
@@ -70,7 +89,7 @@ export async function insertTemperatureLog({ tailNumber, tempF }) {
     recorded_at: new Date().toISOString(),
   };
 
-  const { data, error } = await supabase
+  const { data, error } = await client
     .from("temp_logs")
     .insert(payload)
     .select()
@@ -81,7 +100,8 @@ export async function insertTemperatureLog({ tailNumber, tempF }) {
 }
 
 export async function fetchTonightTempLogs() {
-  const { data, error } = await supabase
+  const client = requireSupabase();
+  const { data, error } = await client
     .from("temp_logs")
     .select("*")
     .eq("station", DEFAULT_STATION)

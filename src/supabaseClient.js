@@ -9,8 +9,14 @@ export function getTodayDateString() {
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
 const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
 
-if (!supabaseUrl || !supabaseAnonKey) {
-  throw new Error("Missing Supabase environment variables.");
+export const supabaseAvailable = Boolean(supabaseUrl && supabaseAnonKey);
+
+if (!supabaseAvailable) {
+  console.warn(
+    "Supabase environment variables are missing. Supabase features will be disabled until VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY are provided."
+  );
 }
 
-export const supabase = createClient(supabaseUrl, supabaseAnonKey);
+export const supabase = supabaseAvailable
+  ? createClient(supabaseUrl, supabaseAnonKey)
+  : null;
