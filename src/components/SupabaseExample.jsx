@@ -7,6 +7,7 @@ import {
   updateMarkedInAt,
   updatePurgedAt,
 } from "../api/nightOpsApi.js";
+import { DEFAULT_STATION, supabaseAvailable } from "../supabaseClient.js";
 
 const initialTailForm = {
   tailNumber: "",
@@ -29,7 +30,14 @@ export function SupabaseExample() {
   const [error, setError] = useState("");
 
   useEffect(() => {
-    refreshData();
+    // Avoid throwing errors on mount when Supabase hasn’t been configured yet
+    if (supabaseAvailable) {
+      refreshData();
+    } else {
+      setError(
+        "Supabase is not configured. Add VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY to load data."
+      );
+    }
   }, []);
 
   async function refreshData() {
@@ -101,12 +109,15 @@ export function SupabaseExample() {
             Supabase quick start (Phase 1)
           </p>
           <p className="text-xs text-cyan-200/80">
-            Assumes station OMA and today&apos;s date; no auth yet.
+            {supabaseAvailable
+              ? `Assumes station ${DEFAULT_STATION} and today’s date; no auth yet.`
+              : "Provide Supabase credentials to enable create/read actions for tonight’s station."}
           </p>
         </div>
         <button
           onClick={refreshData}
-          className="text-xs px-3 py-1.5 rounded-full border border-cyan-800 bg-cyan-900/40 text-cyan-100 hover:bg-cyan-800/60"
+          disabled={!supabaseAvailable || isLoading}
+          className="text-xs px-3 py-1.5 rounded-full border border-cyan-800 bg-cyan-900/40 text-cyan-100 hover:bg-cyan-800/60 disabled:opacity-60 disabled:cursor-not-allowed"
         >
           Refresh data
         </button>
@@ -168,8 +179,8 @@ export function SupabaseExample() {
             </label>
             <button
               type="submit"
-              disabled={isLoading}
-              className="px-3 py-1.5 rounded bg-cyan-400 text-slate-950 font-semibold border border-cyan-200 shadow shadow-cyan-500/30 disabled:opacity-60"
+              disabled={isLoading || !supabaseAvailable}
+              className="px-3 py-1.5 rounded bg-cyan-400 text-slate-950 font-semibold border border-cyan-200 shadow shadow-cyan-500/30 disabled:opacity-60 disabled:cursor-not-allowed"
             >
               {isLoading ? "Saving..." : "Add to night_tails"}
             </button>
@@ -209,8 +220,8 @@ export function SupabaseExample() {
             </label>
             <button
               type="submit"
-              disabled={isLoading}
-              className="px-3 py-1.5 rounded bg-amber-300 text-slate-950 font-semibold border border-amber-200 shadow shadow-amber-500/30 disabled:opacity-60"
+              disabled={isLoading || !supabaseAvailable}
+              className="px-3 py-1.5 rounded bg-amber-300 text-slate-950 font-semibold border border-amber-200 shadow shadow-amber-500/30 disabled:opacity-60 disabled:cursor-not-allowed"
             >
               {isLoading ? "Saving..." : "Add to temp_logs"}
             </button>

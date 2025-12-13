@@ -1,4 +1,11 @@
+const {
+  supabaseRequest,
+  supabaseConfigured,
+} = require("../_supabaseClient");
 
+module.exports = async function (context, req) {
+  try {
+    if (!supabaseConfigured) {
       context.res = {
         status: 500,
         body: { error: "Supabase is not configured." },
@@ -7,7 +14,7 @@
     }
 
     const id = context.bindingData.id;
-    const { partitionKey, purgedDrained, purgedAt } = req.body || {};
+    const { purgedAt, drained } = req.body || {};
 
     if (!id) {
       context.res = {
@@ -17,44 +24,17 @@
       return;
     }
 
-    if (!partitionKey) {
-      context.res = {
-        status: 400,
-        body: { error: "partitionKey is required in body." },
-      };
-      return;
-    }
-
-    if (!purgedDrained) {
-      context.res = {
-        status: 400,
-        body: { error: "purgedDrained is required (Yes / No / N/A)." },
-      };
-      return;
-    }
-
-    const [station, date] = partitionKey.split("-");
-    if (!station || !date) {
-      context.res = {
-        status: 400,
-        body: { error: "partitionKey must include station-date." },
-      };
-      return;
-    }
-
     const valueToSet = purgedAt || new Date().toISOString();
-    const filter =
-      `?id=eq.${encodeURIComponent(id)}` +
-      `&station=eq.${encodeURIComponent(station)}` +
-      `&date=eq.${encodeURIComponent(date)}`;
+    const drainedFlag = typeof drained === "boolean" ? drained : drained === "Yes";
 
-    const data = await supabase.request(`/night_tails${filter}`, {
+    const data = await supabaseRequest("/night_tails", {
       method: "PATCH",
-      headers: { Prefer: "return=representation" },
-      body: JSON.stringify({
-        purged_drained: purgedDrained,
+      searchParams: { id: `eq.${encodeURIComponent(id)}` },
+      body: {
         purged_at: valueToSet,
-      }),
+        drained: drainedFlag,
+      },
+      prefer: "return=representation",
     });
 
     const updated = Array.isArray(data) && data.length ? data[0] : null;
@@ -70,13 +50,12 @@
       status: 200,
       body: {
         id: updated.id,
-        partitionKey: `${updated.station}-${updated.date}`,
-        tail: updated.tail,
-        gate: updated.gate,
+        partitionKey: `${updated.station}-${updated.night_date}`,
+        tail: updated.tail_number,
+        location: updated.location,
         heatSource: updated.heat_source,
-        inTime: updated.in_time,
+        drained: updated.drained,
         markedInAt: updated.marked_in_at,
-        purgedDrained: updated.purged_drained,
         purgedAt: updated.purged_at,
       },
     };

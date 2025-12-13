@@ -1,4 +1,13 @@
+const {
+  supabaseRequest,
+  supabaseConfigured,
+  DEFAULT_STATION,
+  getTodayDateString,
+} = require("../_supabaseClient");
 
+module.exports = async function (context, req) {
+  try {
+    if (!supabaseConfigured) {
       context.res = {
         status: 500,
         body: { error: "Supabase is not configured." },
@@ -6,29 +15,32 @@
       return;
     }
 
-    const station = req.query.station || "OMA";
-    const date = req.query.date || new Date().toISOString().slice(0, 10);
+    const station = req.query.station || DEFAULT_STATION;
+    const nightDate = req.query.date || getTodayDateString();
 
-    const filter =
-      `?station=eq.${encodeURIComponent(station)}&date=eq.${encodeURIComponent(date)}` +
-      "&order=time.desc";
-
-    const items = await supabase.request(`/temp_logs${filter}`);
+    const items = await supabaseRequest("/temp_logs", {
+      searchParams: {
+        select: "*",
+        station: `eq.${station}`,
+        night_date: `eq.${nightDate}`,
+        order: "recorded_at.desc",
+      },
+    });
 
     context.res = {
       status: 200,
       body: {
         station,
-        date,
+        date: nightDate,
         items: (items || []).map((entity) => ({
           id: entity.id,
-          partitionKey: `${entity.station}-${entity.date}`,
-          tail: entity.tail,
+          partitionKey: `${entity.station}-${entity.night_date}`,
+          tail: entity.tail_number,
+          temp: entity.temp_f,
+          recordedAt: entity.recorded_at,
           location: entity.location,
           heatSource: entity.heat_source,
-          temp: entity.temp,
           status: entity.status,
-          time: entity.time,
           notes: entity.notes,
         })),
       },

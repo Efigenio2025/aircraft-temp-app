@@ -45,7 +45,8 @@ export async function supabaseRequest(pathname, { method = "GET", body, searchPa
       const errorBody = await response.json();
       message = errorBody?.message || message;
     } catch (err) {
-      // ignore JSON parse errors and fall back to default message
+      // Ignore JSON parse errors but surface the original exception in logs
+      console.error("Failed to parse Supabase error response:", err);
     }
     throw new Error(message);
   }

@@ -1,5 +1,14 @@
 const { v4: uuidv4 } = require("uuid");
+const {
+  supabaseRequest,
+  supabaseConfigured,
+  DEFAULT_STATION,
+  getTodayDateString,
+} = require("../_supabaseClient");
 
+module.exports = async function (context, req) {
+  try {
+    if (!supabaseConfigured) {
       context.res = {
         status: 500,
         body: { error: "Supabase is not configured." },
@@ -7,30 +16,19 @@ const { v4: uuidv4 } = require("uuid");
       return;
     }
 
-    const {
-      tail,
-      location,
-      heatSource,
-      temp,
-      status,
-      time,
-      notes,
-      station = "OMA",
-      dateOverride,
-    } = req.body || {};
+    const { tail, tailNumber, temp, location, heatSource, status, time, notes, dateOverride } =
+      req.body || {};
 
-    if (!tail || temp === undefined || temp === null || !status) {
+    const tailValue = (tailNumber || tail || "").toUpperCase();
+    if (!tailValue || temp === undefined || temp === null) {
       context.res = {
         status: 400,
-        body: { error: "tail, temp, and status are required." },
+        body: { error: "tail and temp are required." },
       };
       return;
     }
 
-    const now = new Date();
-    const dateStr = dateOverride || now.toISOString().slice(0, 10);
     const numericTemp = typeof temp === "number" ? temp : Number(temp);
-
     if (Number.isNaN(numericTemp)) {
       context.res = {
         status: 400,
@@ -39,24 +37,24 @@ const { v4: uuidv4 } = require("uuid");
       return;
     }
 
-    const id = uuidv4();
+    const timestamp = time || new Date().toISOString();
     const payload = {
-      id,
-      station,
-      date: dateStr,
-      tail,
+      id: uuidv4(),
+      station: DEFAULT_STATION,
+      night_date: dateOverride || getTodayDateString(),
+      tail_number: tailValue,
+      temp_f: numericTemp,
+      recorded_at: timestamp,
       location: location || "",
       heat_source: heatSource || "",
-      temp: numericTemp,
-      status,
-      time: time || now.toISOString(),
+      status: status || "",
       notes: notes || "",
     };
 
-    const data = await supabase.request("/temp_logs", {
+    const data = await supabaseRequest("/temp_logs", {
       method: "POST",
-      headers: { Prefer: "return=representation" },
-      body: JSON.stringify(payload),
+      body: payload,
+      prefer: "return=representation",
     });
 
     const saved = Array.isArray(data) && data.length ? data[0] : payload;
@@ -65,13 +63,13 @@ const { v4: uuidv4 } = require("uuid");
       status: 201,
       body: {
         id: saved.id,
-        partitionKey: `${saved.station}-${saved.date}`,
-        tail: saved.tail,
+        partitionKey: `${saved.station}-${saved.night_date}`,
+        tail: saved.tail_number,
+        temp: saved.temp_f,
+        recordedAt: saved.recorded_at,
         location: saved.location,
         heatSource: saved.heat_source,
-        temp: saved.temp,
         status: saved.status,
-        time: saved.time,
         notes: saved.notes,
       },
     };
