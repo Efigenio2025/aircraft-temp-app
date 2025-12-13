@@ -1,47 +1,25 @@
-const { URL } = require("url");
+import { createClient } from '@supabase/supabase-js';
 
-function getSupabaseClient(context) {
-  const { SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY } = process.env;
+// Read Supabase configuration from Vite environment variables
+const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL;
+const SUPABASE_ANON_KEY = import.meta.env.VITE_SUPABASE_ANON_KEY;
 
-  if (!SUPABASE_URL || !SUPABASE_SERVICE_ROLE_KEY) {
-    context.log.error("Missing Supabase configuration (SUPABASE_URL or SUPABASE_SERVICE_ROLE_KEY)");
-    return null;
-  }
+// Export a supabase client when configuration is present, otherwise null
+export const supabase = SUPABASE_URL && SUPABASE_ANON_KEY
+  ? createClient(SUPABASE_URL, SUPABASE_ANON_KEY)
+  : null;
 
-  try {
-    // Validate URL shape early for clearer errors
-    new URL(SUPABASE_URL);
-  } catch (err) {
-    context.log.error("Invalid SUPABASE_URL", err);
-    return null;
-  }
+// Indicates whether Supabase is configured and available
+export const supabaseAvailable = Boolean(SUPABASE_URL && SUPABASE_ANON_KEY);
 
-  const headers = {
-    apiKey: SUPABASE_SERVICE_ROLE_KEY,
-    Authorization: `Bearer ${SUPABASE_SERVICE_ROLE_KEY}`,
-    "Content-Type": "application/json",
-    Accept: "application/json",
-  };
+// Default station can be provided via VITE_DEFAULT_STATION or falls back to 'DEFAULT'
+export const DEFAULT_STATION = import.meta.env.VITE_DEFAULT_STATION || 'DEFAULT';
 
-  async function request(path, options = {}) {
-    const response = await fetch(`${SUPABASE_URL}/rest/v1${path}`, {
-      ...options,
-      headers: {
-        ...headers,
-        ...(options.headers || {}),
-      },
-    });
-
-    if (!response.ok) {
-      const errorText = await response.text();
-      throw new Error(`Supabase request failed (${response.status}): ${errorText}`);
-    }
-
-    if (response.status === 204) return null;
-    return response.json();
-  }
-
-  return { request };
+// Returns YYYY-MM-DD for today's date (local timezone)
+export function getTodayDateString() {
+  const d = new Date();
+  const yyyy = d.getFullYear();
+  const mm = String(d.getMonth() + 1).padStart(2, '0');
+  const dd = String(d.getDate()).padStart(2, '0');
+  return `${yyyy}-${mm}-${dd}`;
 }
-
-module.exports = { getSupabaseClient };
