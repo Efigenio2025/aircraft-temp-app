@@ -1,25 +1,61 @@
-import { createClient } from '@supabase/supabase-js';
+const supabaseUrl = process.env.VITE_SUPABASE_URL || process.env.SUPABASE_URL;
+const supabaseAnonKey = process.env.VITE_SUPABASE_ANON_KEY || process.env.SUPABASE_ANON_KEY;
 
-// Read Supabase configuration from Vite environment variables
-const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL;
-const SUPABASE_ANON_KEY = import.meta.env.VITE_SUPABASE_ANON_KEY;
+const DEFAULT_STATION = process.env.VITE_DEFAULT_STATION || "OMA";
+const supabaseConfigured = Boolean(supabaseUrl && supabaseAnonKey);
 
-// Export a supabase client when configuration is present, otherwise null
-export const supabase = SUPABASE_URL && SUPABASE_ANON_KEY
-  ? createClient(SUPABASE_URL, SUPABASE_ANON_KEY)
-  : null;
-
-// Indicates whether Supabase is configured and available
-export const supabaseAvailable = Boolean(SUPABASE_URL && SUPABASE_ANON_KEY);
-
-// Default station can be provided via VITE_DEFAULT_STATION or falls back to 'DEFAULT'
-export const DEFAULT_STATION = import.meta.env.VITE_DEFAULT_STATION || 'DEFAULT';
-
-// Returns YYYY-MM-DD for today's date (local timezone)
-export function getTodayDateString() {
-  const d = new Date();
-  const yyyy = d.getFullYear();
-  const mm = String(d.getMonth() + 1).padStart(2, '0');
-  const dd = String(d.getDate()).padStart(2, '0');
-  return `${yyyy}-${mm}-${dd}`;
+function getTodayDateString() {
+  return new Date().toISOString().slice(0, 10);
 }
+
+function buildRestUrl(pathname, searchParams = {}) {
+  const url = new URL(`${supabaseUrl}/rest/v1${pathname}`);
+  Object.entries(searchParams).forEach(([key, value]) => {
+    url.searchParams.set(key, value);
+  });
+  return url.toString();
+}
+
+async function supabaseRequest(pathname, { method = "GET", body, searchParams, prefer } = {}) {
+  if (!supabaseConfigured) {
+    throw new Error("Supabase is not configured. Add VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY.");
+  }
+
+  const headers = {
+    apikey: supabaseAnonKey,
+    Authorization: `Bearer ${supabaseAnonKey}`,
+    "Content-Type": "application/json",
+  };
+
+  if (prefer) {
+    headers.Prefer = prefer;
+  }
+
+  const response = await fetch(buildRestUrl(pathname, searchParams), {
+    method,
+    headers,
+    body: body ? JSON.stringify(body) : undefined,
+  });
+
+  if (!response.ok) {
+    let message = `Supabase request failed with status ${response.status}`;
+    try {
+      const errorBody = await response.json();
+      message = errorBody?.message || message;
+    } catch (err) {
+      // Ignore JSON parse errors but log for diagnostics
+      console.error("Failed to parse Supabase error response:", err);
+    }
+    throw new Error(message);
+  }
+
+  if (response.status === 204) return null;
+  return response.json();
+}
+
+module.exports = {
+  supabaseRequest,
+  supabaseConfigured,
+  DEFAULT_STATION,
+  getTodayDateString,
+};
