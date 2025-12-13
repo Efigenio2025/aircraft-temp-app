@@ -1,53 +1,36 @@
-const { TableClient } = require("@azure/data-tables");
-const { getConnectionString } = require("../shared/getConnectionString");
-const tableName = "TempLogs";
 
-module.exports = async function (context, req) {
-  try {
-    const connectionString = getConnectionString(context);
-    if (!connectionString) {
       context.res = {
         status: 500,
-        body: { error: "Server storage not configured." },
+        body: { error: "Supabase is not configured." },
       };
       return;
     }
 
-    const client = TableClient.fromConnectionString(connectionString, tableName);
-
     const station = req.query.station || "OMA";
     const date = req.query.date || new Date().toISOString().slice(0, 10);
-    const partitionKey = `${station}-${date}`;
 
-    const items = [];
-    const iterator = client.listEntities({
-      queryOptions: {
-        filter: `PartitionKey eq '${partitionKey}'`,
-      },
-    });
+    const filter =
+      `?station=eq.${encodeURIComponent(station)}&date=eq.${encodeURIComponent(date)}` +
+      "&order=time.desc";
 
-    for await (const entity of iterator) {
-      items.push({
-        id: entity.rowKey,
-        partitionKey: entity.partitionKey,
-        tail: entity.Tail,
-        location: entity.Location,
-        heatSource: entity.HeatSource,
-        temp: entity.Temp,
-        status: entity.Status,
-        time: entity.Time,
-        notes: entity.Notes,
-      });
-    }
-
-    items.sort((a, b) => (a.time || "").localeCompare(b.time || "")).reverse();
+    const items = await supabase.request(`/temp_logs${filter}`);
 
     context.res = {
       status: 200,
       body: {
         station,
         date,
-        items,
+        items: (items || []).map((entity) => ({
+          id: entity.id,
+          partitionKey: `${entity.station}-${entity.date}`,
+          tail: entity.tail,
+          location: entity.location,
+          heatSource: entity.heat_source,
+          temp: entity.temp,
+          status: entity.status,
+          time: entity.time,
+          notes: entity.notes,
+        })),
       },
     };
   } catch (err) {
