@@ -135,19 +135,19 @@ export function TemperatureLogForm({
 
   return (
     <div className="px-4 py-6">
-      <div className="max-w-xl mx-auto rounded-2xl border border-slate-800 bg-slate-900/80 p-4 space-y-4">
+      <div className="max-w-xl mx-auto glacier-panel p-4 space-y-4">
         <header className="flex items-center justify-between gap-2">
           <div>
-            <h2 className="text-sm font-semibold text-slate-100">
+            <h2 className="text-sm font-semibold text-cyan-50">
               Log Temperature
             </h2>
-            <p className="text-xs text-slate-400">
+            <p className="text-xs text-cyan-100/70">
               Auto-populated from Tonight&apos;s Aircraft. Adjust tail or heat source if needed.
             </p>
           </div>
           {selectedAircraft && (
-            <div className="text-right text-[11px] text-slate-400">
-              <div className="font-semibold text-slate-100">
+            <div className="text-right text-[11px] text-cyan-100/70">
+              <div className="font-semibold text-cyan-50">
                 {selectedAircraft.tail}
               </div>
               <div>
@@ -161,13 +161,13 @@ export function TemperatureLogForm({
         <form onSubmit={handleSubmit} className="space-y-4">
           {/* Aircraft selector */}
           <div className="space-y-1">
-            <label className="text-xs font-medium text-slate-300">
+            <label className="text-xs font-medium text-cyan-100/90">
               Tonight&apos;s Aircraft
             </label>
             <select
               value={activeTail || ""}
               onChange={handleSelectTail}
-              className="w-full rounded-xl bg-slate-950/60 border border-slate-700 px-3 py-2 text-xs text-slate-50 focus:outline-none focus:ring-2 focus:ring-sky-500/70"
+              className="glacier-input"
             >
               <option value="">Select tail...</option>
               {preppedTails.map((t) => (
@@ -180,15 +180,15 @@ export function TemperatureLogForm({
 
           {/* Auto info row from prep screen */}
           <div className="grid grid-cols-2 gap-3 text-[11px]">
-            <div className="rounded-xl border border-slate-800 bg-slate-950/60 px-3 py-2">
-              <div className="text-slate-400">Gate / Parking</div>
-              <div className="font-semibold text-slate-100">
+            <div className="glacier-card px-3 py-2">
+              <div className="text-cyan-100/70">Gate / Parking</div>
+              <div className="font-semibold text-cyan-50">
                 {selectedAircraft?.gate || "—"}
               </div>
             </div>
-            <div className="rounded-xl border border-slate-800 bg-slate-950/60 px-3 py-2">
-              <div className="text-slate-400">Heat Source</div>
-              <div className="font-semibold text-slate-100">
+            <div className="glacier-card px-3 py-2">
+              <div className="text-cyan-100/70">Heat Source</div>
+              <div className="font-semibold text-cyan-50">
                 {selectedAircraft?.heatSource || "—"}
               </div>
             </div>
@@ -196,14 +196,14 @@ export function TemperatureLogForm({
 
           {/* Heat Source override */}
           <div className="space-y-1">
-            <label className="text-xs font-medium text-slate-300">
+            <label className="text-xs font-medium text-cyan-100/90">
               Change Heat Source (optional)
             </label>
             <select
               value={selectedAircraft?.heatSource || ""}
               onChange={handleHeatSourceChange}
               disabled={!selectedAircraft}
-              className="w-full rounded-xl bg-slate-950/60 border border-slate-700 px-3 py-2 text-xs text-slate-50 focus:outline-none focus:ring-2 focus:ring-sky-500/70 disabled:opacity-50 disabled:cursor-not-allowed"
+              className="glacier-input disabled:opacity-50 disabled:cursor-not-allowed"
             >
               <option value="">Select heat source...</option>
               {HEAT_SOURCES.map((hs) => (
@@ -220,11 +220,11 @@ export function TemperatureLogForm({
               type="button"
               onClick={handleMarkInClick}
               disabled={!selectedAircraft}
-              className={`w-full rounded-xl border px-3 py-2 font-medium transition 
+              className={`w-full rounded-xl border px-3 py-2 font-medium transition
                 ${
                   selectedAircraft?.inTime
-                    ? "bg-emerald-500/20 border-emerald-500/70 text-emerald-100"
-                    : "bg-amber-500/20 border-amber-500/70 text-amber-100 hover:bg-amber-500/30"
+                    ? "bg-emerald-500/20 border-emerald-400/70 text-emerald-50"
+                    : "bg-cyan-500/20 border-cyan-400/70 text-cyan-50 hover:bg-cyan-400/25"
                 }
                 ${!selectedAircraft ? "opacity-50 cursor-not-allowed" : ""}`}
             >
@@ -235,11 +235,11 @@ export function TemperatureLogForm({
               type="button"
               onClick={handlePurgeClick}
               disabled={!selectedAircraft}
-              className={`w-full rounded-xl border px-3 py-2 font-medium transition 
+              className={`w-full rounded-xl border px-3 py-2 font-medium transition
                 ${
                   selectedAircraft?.purgedDrained === "Yes"
-                    ? "bg-sky-500/20 border-sky-500/70 text-sky-100"
-                    : "bg-slate-800/60 border-slate-600 text-slate-100 hover:bg-slate-700/80"
+                    ? "bg-cyan-500/15 border-cyan-400/70 text-cyan-50"
+                    : "bg-slate-900/60 border-cyan-900/60 text-cyan-100 hover:bg-slate-800/80"
                 }
                 ${!selectedAircraft ? "opacity-50 cursor-not-allowed" : ""}`}
             >
@@ -249,7 +249,7 @@ export function TemperatureLogForm({
 
           {/* Temperature input */}
           <div className="space-y-1">
-            <label className="text-xs font-medium text-slate-300">
+            <label className="text-xs font-medium text-cyan-100/90">
               Temperature (°F)
             </label>
             <input
@@ -258,13 +258,13 @@ export function TemperatureLogForm({
               step="0.1"
               value={temperature}
               onChange={(e) => setTemperature(e.target.value)}
-              className="w-full rounded-xl bg-slate-950/60 border border-slate-700 px-3 py-2 text-xs text-slate-50 placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-sky-500/70"
+              className="glacier-input"
               placeholder="Enter temp, e.g. 74.5"
             />
             {temperature && (
-              <p className="text-[11px] text-slate-400">
+              <p className="text-[11px] text-cyan-100/70">
                 Status:{" "}
-                <span className="font-semibold text-slate-100">
+                <span className="font-semibold text-cyan-50">
                   {getTempStatus(temperature)}
                 </span>
               </p>
@@ -273,20 +273,20 @@ export function TemperatureLogForm({
 
           {/* Notes */}
           <div className="space-y-1">
-            <label className="text-xs font-medium text-slate-300">
+            <label className="text-xs font-medium text-cyan-100/90">
               Notes (optional)
             </label>
             <textarea
               rows={2}
               value={notes}
               onChange={(e) => setNotes(e.target.value)}
-              className="w-full rounded-xl bg-slate-950/60 border border-slate-700 px-3 py-2 text-xs text-slate-50 placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-sky-500/70"
+              className="glacier-input"
               placeholder="Example: cabin warm on arrival, doors closed 15 mins, etc."
             />
           </div>
 
           {error && (
-            <p className="text-[11px] text-rose-400 bg-rose-950/50 border border-rose-800 rounded-xl px-3 py-2">
+            <p className="text-[11px] text-rose-100 bg-rose-900/60 border border-rose-700/70 rounded-xl px-3 py-2">
               {error}
             </p>
           )}
@@ -295,7 +295,7 @@ export function TemperatureLogForm({
             <button
               type="submit"
               disabled={submitting}
-              className="inline-flex items-center gap-2 rounded-xl bg-sky-600 hover:bg-sky-500 px-4 py-2 text-xs font-medium text-white disabled:opacity-60 disabled:cursor-not-allowed"
+              className="inline-flex items-center gap-2 rounded-xl bg-cyan-300 hover:bg-cyan-200 px-4 py-2 text-xs font-medium text-slate-950 shadow-lg shadow-cyan-500/30 disabled:opacity-60 disabled:cursor-not-allowed"
             >
               {submitting ? "Saving..." : "Save Temperature Log"}
             </button>

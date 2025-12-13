@@ -1,20 +1,15 @@
-const { TableClient } = require("@azure/data-tables");
-
-const connectionString = process.env.STORAGE_CONNECTION_STRING;
-const tableName = "NightTails";
+const { getSupabaseClient } = require("../_supabaseClient");
 
 module.exports = async function (context, req) {
   try {
-    if (!connectionString) {
-      context.log.error("Missing STORAGE_CONNECTION_STRING");
+    const supabase = getSupabaseClient(context);
+    if (!supabase) {
       context.res = {
         status: 500,
-        body: { error: "Server storage not configured." },
+        body: { error: "Supabase is not configured." },
       };
       return;
     }
-
-    const client = TableClient.fromConnectionString(connectionString, tableName);
 
     const id = context.bindingData.id;
     const { partitionKey, markedInAt } = req.body || {};
@@ -35,36 +30,53 @@ module.exports = async function (context, req) {
       return;
     }
 
-    const entity = await client.getEntity(partitionKey, id);
+    const [station, date] = partitionKey.split("-");
+    if (!station || !date) {
+      context.res = {
+        status: 400,
+        body: { error: "partitionKey must include station-date." },
+      };
+      return;
+    }
 
     const valueToSet = markedInAt || new Date().toISOString();
-    entity.MarkedInAt = valueToSet;
 
-    await client.updateEntity(entity, "Replace");
+    const filter =
+      `?id=eq.${encodeURIComponent(id)}` +
+      `&station=eq.${encodeURIComponent(station)}` +
+      `&date=eq.${encodeURIComponent(date)}`;
 
-    context.res = {
-      status: 200,
-      body: {
-        id,
-        partitionKey,
-        tail: entity.Tail,
-        gate: entity.Gate,
-        heatSource: entity.HeatSource,
-        inTime: entity.InTime,
-        markedInAt: entity.MarkedInAt,
-        purgedDrained: entity.PurgedDrained,
-        purgedAt: entity.PurgedAt,
-      },
-    };
-  } catch (err) {
-    context.log.error("Error in NightTailsMarkIn:", err);
-    if (err.statusCode === 404) {
+    const data = await supabase.request(`/night_tails${filter}`, {
+      method: "PATCH",
+      headers: { Prefer: "return=representation" },
+      body: JSON.stringify({ marked_in_at: valueToSet }),
+    });
+
+    const updated = Array.isArray(data) && data.length ? data[0] : null;
+    if (!updated) {
       context.res = {
         status: 404,
         body: { error: "Night tail not found." },
       };
       return;
     }
+
+    context.res = {
+      status: 200,
+      body: {
+        id: updated.id,
+        partitionKey: `${updated.station}-${updated.date}`,
+        tail: updated.tail,
+        gate: updated.gate,
+        heatSource: updated.heat_source,
+        inTime: updated.in_time,
+        markedInAt: updated.marked_in_at,
+        purgedDrained: updated.purged_drained,
+        purgedAt: updated.purged_at,
+      },
+    };
+  } catch (err) {
+    context.log.error("Error in NightTailsMarkIn:", err);
     context.res = {
       status: 500,
       body: { error: "Failed to mark in night tail." },

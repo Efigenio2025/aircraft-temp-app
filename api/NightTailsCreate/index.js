@@ -1,21 +1,16 @@
-const { TableClient } = require("@azure/data-tables");
 const { v4: uuidv4 } = require("uuid");
-
-const connectionString = process.env.STORAGE_CONNECTION_STRING;
-const tableName = "NightTails";
+const { getSupabaseClient } = require("../_supabaseClient");
 
 module.exports = async function (context, req) {
   try {
-    if (!connectionString) {
-      context.log.error("Missing STORAGE_CONNECTION_STRING");
+    const supabase = getSupabaseClient(context);
+    if (!supabase) {
       context.res = {
         status: 500,
-        body: { error: "Server storage not configured." },
+        body: { error: "Supabase is not configured." },
       };
       return;
     }
-
-    const client = TableClient.fromConnectionString(connectionString, tableName);
 
     const {
       tail,
@@ -36,35 +31,41 @@ module.exports = async function (context, req) {
 
     const now = new Date();
     const dateStr = dateOverride || now.toISOString().slice(0, 10);
-    const partitionKey = `${station}-${dateStr}`;
-    const rowKey = uuidv4();
 
-    const entity = {
-      partitionKey,
-      rowKey,
-      Tail: tail,
-      Gate: gate || "",
-      HeatSource: heatSource || "",
-      InTime: inTime || "",
-      MarkedInAt: "",
-      PurgedDrained: "N/A",
-      PurgedAt: "",
+    const id = uuidv4();
+    const payload = {
+      id,
+      station,
+      date: dateStr,
+      tail,
+      gate: gate || "",
+      heat_source: heatSource || "",
+      in_time: inTime || "",
+      marked_in_at: "",
+      purged_drained: "N/A",
+      purged_at: "",
     };
 
-    await client.createEntity(entity);
+    const data = await supabase.request("/night_tails", {
+      method: "POST",
+      headers: { Prefer: "return=representation" },
+      body: JSON.stringify(payload),
+    });
+
+    const saved = Array.isArray(data) && data.length ? data[0] : payload;
 
     context.res = {
       status: 201,
       body: {
-        id: rowKey,
-        partitionKey,
-        tail: entity.Tail,
-        gate: entity.Gate,
-        heatSource: entity.HeatSource,
-        inTime: entity.InTime,
-        markedInAt: entity.MarkedInAt,
-        purgedDrained: entity.PurgedDrained,
-        purgedAt: entity.PurgedAt,
+        id: saved.id,
+        partitionKey: `${saved.station}-${saved.date}`,
+        tail: saved.tail,
+        gate: saved.gate,
+        heatSource: saved.heat_source,
+        inTime: saved.in_time,
+        markedInAt: saved.marked_in_at,
+        purgedDrained: saved.purged_drained,
+        purgedAt: saved.purged_at,
       },
     };
   } catch (err) {

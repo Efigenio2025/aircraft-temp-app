@@ -1,49 +1,41 @@
-const { TableClient } = require("@azure/data-tables");
-
-const connectionString = process.env.STORAGE_CONNECTION_STRING;
-const tableName = "NightTails";
+const { getSupabaseClient } = require("../_supabaseClient");
 
 module.exports = async function (context, req) {
   try {
-    if (!connectionString) {
-      context.log.error("Missing STORAGE_CONNECTION_STRING");
+    const supabase = getSupabaseClient(context);
+    if (!supabase) {
       context.res = {
         status: 500,
-        body: { error: "Server storage not configured." },
+        body: { error: "Supabase is not configured." },
       };
       return;
     }
 
-    const client = TableClient.fromConnectionString(connectionString, tableName);
-
     const station = req.query.station || "OMA";
     const date = req.query.date || new Date().toISOString().slice(0, 10);
-    const partitionKey = `${station}-${date}`;
+    const filter =
+      `?station=eq.${encodeURIComponent(station)}&date=eq.${encodeURIComponent(date)}` +
+      "&order=tail.asc";
 
-    const items = [];
-    const entities = client.listEntities({
-      queryOptions: {
-        filter: `PartitionKey eq '${partitionKey}'`,
-      },
-    });
-
-    for await (const e of entities) {
-      items.push({
-        id: e.rowKey,
-        partitionKey: e.partitionKey,
-        tail: e.Tail,
-        gate: e.Gate,
-        heatSource: e.HeatSource,
-        inTime: e.InTime,
-        markedInAt: e.MarkedInAt,
-        purgedDrained: e.PurgedDrained,
-        purgedAt: e.PurgedAt,
-      });
-    }
+    const items = await supabase.request(`/night_tails${filter}`);
 
     context.res = {
       status: 200,
-      body: { station, date, items },
+      body: {
+        station,
+        date,
+        items: (items || []).map((e) => ({
+          id: e.id,
+          partitionKey: `${e.station}-${e.date}`,
+          tail: e.tail,
+          gate: e.gate,
+          heatSource: e.heat_source,
+          inTime: e.in_time,
+          markedInAt: e.marked_in_at,
+          purgedDrained: e.purged_drained,
+          purgedAt: e.purged_at,
+        })),
+      },
     };
   } catch (err) {
     context.log.error("NightTailsGet Error", err);
