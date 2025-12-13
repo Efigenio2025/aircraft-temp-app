@@ -1,17 +1,16 @@
 import {
-  supabase,
+  supabaseRequest,
   supabaseAvailable,
   DEFAULT_STATION,
   getTodayDateString,
 } from "../supabaseClient.js";
 
 function requireSupabase() {
-  if (!supabaseAvailable || !supabase) {
+  if (!supabaseAvailable) {
     throw new Error(
       "Supabase is not configured. Provide VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY to enable Supabase features."
     );
   }
-  return supabase;
 }
 
 export async function insertNightTail({
@@ -20,7 +19,7 @@ export async function insertNightTail({
   heatSource,
   drained = false,
 }) {
-  const client = requireSupabase();
+  requireSupabase();
   const payload = {
     station: DEFAULT_STATION,
     night_date: getTodayDateString(),
@@ -30,57 +29,53 @@ export async function insertNightTail({
     drained,
   };
 
-  const { data, error } = await client
-    .from("night_tails")
-    .insert(payload)
-    .select()
-    .single();
+  const data = await supabaseRequest("/night_tails", {
+    method: "POST",
+    body: payload,
+    prefer: "return=representation",
+  });
 
-  if (error) throw error;
-  return data;
+  return Array.isArray(data) ? data[0] : data;
 }
 
 export async function fetchTonightNightTails() {
-  const client = requireSupabase();
-  const { data, error } = await client
-    .from("night_tails")
-    .select("*")
-    .eq("station", DEFAULT_STATION)
-    .eq("night_date", getTodayDateString())
-    .order("created_at", { ascending: false });
-
-  if (error) throw error;
-  return data;
+  requireSupabase();
+  return supabaseRequest("/night_tails", {
+    searchParams: {
+      select: "*",
+      station: `eq.${DEFAULT_STATION}`,
+      night_date: `eq.${getTodayDateString()}`,
+      order: "created_at.desc",
+    },
+  });
 }
 
 export async function updateMarkedInAt(id) {
-  const client = requireSupabase();
-  const { data, error } = await client
-    .from("night_tails")
-    .update({ marked_in_at: new Date().toISOString() })
-    .eq("id", id)
-    .select()
-    .single();
+  requireSupabase();
+  const data = await supabaseRequest("/night_tails", {
+    method: "PATCH",
+    searchParams: { id: `eq.${id}` },
+    body: { marked_in_at: new Date().toISOString() },
+    prefer: "return=representation",
+  });
 
-  if (error) throw error;
-  return data;
+  return Array.isArray(data) ? data[0] : data;
 }
 
 export async function updatePurgedAt(id) {
-  const client = requireSupabase();
-  const { data, error } = await client
-    .from("night_tails")
-    .update({ purged_at: new Date().toISOString() })
-    .eq("id", id)
-    .select()
-    .single();
+  requireSupabase();
+  const data = await supabaseRequest("/night_tails", {
+    method: "PATCH",
+    searchParams: { id: `eq.${id}` },
+    body: { purged_at: new Date().toISOString() },
+    prefer: "return=representation",
+  });
 
-  if (error) throw error;
-  return data;
+  return Array.isArray(data) ? data[0] : data;
 }
 
 export async function insertTemperatureLog({ tailNumber, tempF }) {
-  const client = requireSupabase();
+  requireSupabase();
   const payload = {
     station: DEFAULT_STATION,
     night_date: getTodayDateString(),
@@ -89,25 +84,23 @@ export async function insertTemperatureLog({ tailNumber, tempF }) {
     recorded_at: new Date().toISOString(),
   };
 
-  const { data, error } = await client
-    .from("temp_logs")
-    .insert(payload)
-    .select()
-    .single();
+  const data = await supabaseRequest("/temp_logs", {
+    method: "POST",
+    body: payload,
+    prefer: "return=representation",
+  });
 
-  if (error) throw error;
-  return data;
+  return Array.isArray(data) ? data[0] : data;
 }
 
 export async function fetchTonightTempLogs() {
-  const client = requireSupabase();
-  const { data, error } = await client
-    .from("temp_logs")
-    .select("*")
-    .eq("station", DEFAULT_STATION)
-    .eq("night_date", getTodayDateString())
-    .order("recorded_at", { ascending: false });
-
-  if (error) throw error;
-  return data;
+  requireSupabase();
+  return supabaseRequest("/temp_logs", {
+    searchParams: {
+      select: "*",
+      station: `eq.${DEFAULT_STATION}`,
+      night_date: `eq.${getTodayDateString()}`,
+      order: "recorded_at.desc",
+    },
+  });
 }
