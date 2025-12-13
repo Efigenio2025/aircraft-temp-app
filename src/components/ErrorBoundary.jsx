@@ -6,6 +6,17 @@ export class ErrorBoundary extends React.Component {
     this.state = { hasError: false, error: null };
   }
 
+  componentDidMount() {
+    // Capture errors that occur outside React render (e.g., async/Script load)
+    window.addEventListener("error", this.handleGlobalError);
+    window.addEventListener("unhandledrejection", this.handleRejection);
+  }
+
+  componentWillUnmount() {
+    window.removeEventListener("error", this.handleGlobalError);
+    window.removeEventListener("unhandledrejection", this.handleRejection);
+  }
+
   static getDerivedStateFromError(error) {
     return { hasError: true, error };
   }
@@ -14,6 +25,17 @@ export class ErrorBoundary extends React.Component {
     // Surface full error details for diagnostics without crashing to a blank screen
     console.error("Unexpected UI error:", error, info);
   }
+
+  handleGlobalError = (event) => {
+    if (event?.error) {
+      this.setState({ hasError: true, error: event.error });
+    }
+  };
+
+  handleRejection = (event) => {
+    const reason = event?.reason instanceof Error ? event.reason : new Error(String(event?.reason ?? "Unknown error"));
+    this.setState({ hasError: true, error: reason });
+  };
 
   handleRetry = () => {
     this.setState({ hasError: false, error: null });
