@@ -1,4 +1,14 @@
 const { v4: uuidv4 } = require("uuid");
+const {
+  supabaseRequest,
+  supabaseConfigured,
+  DEFAULT_STATION,
+  getTodayDateString,
+} = require("../_supabaseClient");
+
+module.exports = async function (context, req) {
+  try {
+    if (!supabaseConfigured) {
       context.res = {
         status: 500,
         body: { error: "Supabase is not configured." },
@@ -8,14 +18,15 @@ const { v4: uuidv4 } = require("uuid");
 
     const {
       tail,
-      gate,
+      tailNumber,
+      location,
       heatSource,
-      inTime,
-      station = "OMA",
+      drained = false,
       dateOverride,
     } = req.body || {};
 
-    if (!tail) {
+    const tailValue = (tailNumber || tail || "").toUpperCase();
+    if (!tailValue) {
       context.res = {
         status: 400,
         body: { error: "tail is required." },
@@ -23,27 +34,23 @@ const { v4: uuidv4 } = require("uuid");
       return;
     }
 
-    const now = new Date();
-    const dateStr = dateOverride || now.toISOString().slice(0, 10);
-
-    const id = uuidv4();
+    const nightDate = dateOverride || getTodayDateString();
     const payload = {
-      id,
-      station,
-      date: dateStr,
-      tail,
-      gate: gate || "",
+      id: uuidv4(),
+      station: DEFAULT_STATION,
+      night_date: nightDate,
+      tail_number: tailValue,
+      location: location || "",
       heat_source: heatSource || "",
-      in_time: inTime || "",
-      marked_in_at: "",
-      purged_drained: "N/A",
-      purged_at: "",
+      drained: Boolean(drained),
+      marked_in_at: null,
+      purged_at: null,
     };
 
-    const data = await supabase.request("/night_tails", {
+    const data = await supabaseRequest("/night_tails", {
       method: "POST",
-      headers: { Prefer: "return=representation" },
-      body: JSON.stringify(payload),
+      body: payload,
+      prefer: "return=representation",
     });
 
     const saved = Array.isArray(data) && data.length ? data[0] : payload;
@@ -52,13 +59,12 @@ const { v4: uuidv4 } = require("uuid");
       status: 201,
       body: {
         id: saved.id,
-        partitionKey: `${saved.station}-${saved.date}`,
-        tail: saved.tail,
-        gate: saved.gate,
+        partitionKey: `${saved.station}-${saved.night_date}`,
+        tail: saved.tail_number,
+        location: saved.location,
         heatSource: saved.heat_source,
-        inTime: saved.in_time,
+        drained: saved.drained,
         markedInAt: saved.marked_in_at,
-        purgedDrained: saved.purged_drained,
         purgedAt: saved.purged_at,
       },
     };
