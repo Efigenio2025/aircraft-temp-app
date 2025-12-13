@@ -1,9 +1,4 @@
-const { getSupabaseClient } = require("../_supabaseClient");
 
-module.exports = async function (context, req) {
-  try {
-    const supabase = getSupabaseClient(context);
-    if (!supabase) {
       context.res = {
         status: 500,
         body: { error: "Supabase is not configured." },
