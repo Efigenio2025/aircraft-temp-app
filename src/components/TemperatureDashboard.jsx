@@ -156,18 +156,18 @@ export function TemperatureDashboard({ logs = [], nightTails = [] }) {
       {/* Header */}
       <header className="flex flex-col md:flex-row md:items-center md:justify-between gap-2 mb-4">
         <div>
-          <h1 className="text-xl font-semibold text-slate-50">
+          <h1 className="text-xl font-semibold text-cyan-50">
             Station Dashboard
           </h1>
-          <p className="text-xs text-slate-400">
+          <p className="text-xs text-cyan-100/70">
             Tonight&apos;s tails, temps, purge status, and historical trends.
           </p>
         </div>
         <div className="flex flex-wrap gap-2 text-[11px]">
-          <span className="rounded-full border border-slate-700 px-3 py-1 text-slate-400">
+          <span className="rounded-full border border-cyan-900/60 bg-slate-950/60 px-3 py-1 text-cyan-100/80">
             Total logs: {logs.length}
           </span>
-          <span className="rounded-full border border-slate-700 px-3 py-1 text-slate-400">
+          <span className="rounded-full border border-cyan-900/60 bg-slate-950/60 px-3 py-1 text-cyan-100/80">
             Tails prepped: {nightTails.length}
           </span>
         </div>
@@ -178,31 +178,31 @@ export function TemperatureDashboard({ logs = [], nightTails = [] }) {
         {/* LEFT COLUMN – Snapshot pills control filters */}
         <div className="space-y-4">
           {/* Filter explanation + clear button */}
-          <section className="rounded-2xl border border-slate-800 bg-slate-900/80 p-3 space-y-2">
+          <section className="glacier-panel p-3 space-y-2">
             <div className="flex items-center justify-between gap-2">
-              <h2 className="text-sm font-semibold text-slate-100">
+              <h2 className="text-sm font-semibold text-cyan-50">
                 Snapshot Filters
               </h2>
               {filtersActive && (
                 <button
                   type="button"
                   onClick={clearAllFilters}
-                  className="text-[11px] text-sky-300 hover:text-sky-200"
+                  className="text-[11px] text-cyan-200 hover:text-cyan-100"
                 >
                   Clear
                 </button>
               )}
             </div>
-            <p className="text-[10px] text-slate-500">
+            <p className="text-[10px] text-cyan-100/70">
               Tap any colored chip to filter tables and counts. Historical
               graphs always show all logs for tonight&apos;s aircraft.
             </p>
           </section>
 
           {/* Snapshot chips – they ARE the filters */}
-          <section className="rounded-2xl border border-slate-800 bg-slate-900/80 p-3 space-y-4">
+          <section className="glacier-panel p-3 space-y-4">
             <div className="space-y-2">
-              <p className="text-[11px] text-slate-400">Temperature health</p>
+              <p className="text-[11px] text-cyan-100/80">Temperature health</p>
               <div className="flex flex-wrap gap-1.5">
                 <PillStat
                   label="Logs"
@@ -244,8 +244,8 @@ export function TemperatureDashboard({ logs = [], nightTails = [] }) {
               </div>
             </div>
 
-            <div className="space-y-2 pt-2 border-t border-slate-800">
-              <p className="text-[11px] text-slate-400">Purge / drain</p>
+            <div className="space-y-2 pt-2 border-t border-cyan-900/60">
+              <p className="text-[11px] text-cyan-100/80">Purge / drain</p>
               <div className="flex flex-wrap gap-1.5">
                 <PillStat
                   label="Tails"
@@ -294,19 +294,19 @@ export function TemperatureDashboard({ logs = [], nightTails = [] }) {
         {/* RIGHT COLUMN – Historical on top + tables */}
         <div className="space-y-4">
           {/* Historical graphs for tonight's aircraft (IGNORES FILTERS) */}
-          <section className="rounded-2xl border border-slate-800 bg-slate-900/80 p-4 space-y-3">
+          <section className="glacier-panel p-4 space-y-3">
             <div className="flex items-center justify-between">
-              <h2 className="text-sm font-semibold text-slate-100">
+              <h2 className="text-sm font-semibold text-cyan-50">
                 Historical Temps – Tonight&apos;s Aircraft
               </h2>
-              <span className="text-[11px] text-slate-500">
+              <span className="text-[11px] text-cyan-100/70">
                 Uses all temp logs for tonight&apos;s tails. Filters do not
                 apply here.
               </span>
             </div>
 
             {nightTails.length === 0 ? (
-              <p className="text-[11px] text-slate-500">
+              <p className="text-[11px] text-cyan-100/70">
                 No tails have been added to Tonight&apos;s Aircraft.
               </p>
             ) : (
@@ -353,7 +353,7 @@ export function TemperatureDashboard({ logs = [], nightTails = [] }) {
                         "border-rose-500/90 bg-rose-950/50 animate-pulse-fast";
                     } else {
                       cardClass +=
-                        "border-slate-800 bg-slate-950/60";
+                        "border-cyan-900/60 bg-slate-950/70";
                     }
                   } else {
                     // Expanded: larger, non-glowing, easier to read
@@ -371,7 +371,7 @@ export function TemperatureDashboard({ logs = [], nightTails = [] }) {
                         "border-rose-500/90 bg-rose-950/80 shadow-lg";
                     } else {
                       cardClass +=
-                        "border-slate-800 bg-slate-950/80 shadow-lg";
+                        "border-cyan-900/60 bg-slate-950/80 shadow-lg";
                     }
                     cardClass += " md:min-h-[200px]";
                   }
@@ -389,10 +389,10 @@ export function TemperatureDashboard({ logs = [], nightTails = [] }) {
                       >
                         <div className="flex items-start justify-between gap-2">
                           <div>
-                            <div className="text-xs font-semibold text-slate-100">
+                            <div className="text-xs font-semibold text-cyan-50">
                               {t.tail}
                             </div>
-                            <div className="text-[10px] text-slate-500">
+                            <div className="text-[10px] text-cyan-100/70">
                               {t.gate || "No gate"} ·{" "}
                               {t.heatSource || "No heat source"}
                             </div>
@@ -400,23 +400,23 @@ export function TemperatureDashboard({ logs = [], nightTails = [] }) {
                           <div className="flex flex-col items-end gap-0.5 text-right">
                             {hasLatest ? (
                               <>
-                                <div className="text-sm font-semibold text-slate-50 leading-tight">
+                                <div className="text-sm font-semibold text-cyan-50 leading-tight">
                                   {latestDisplayTemp}
                                 </div>
                                 <StatusBadge status={latestStatus} />
-                                <span className="text-[10px] text-slate-400">
+                                <span className="text-[10px] text-cyan-100/70">
                                   {latest?.time || "—"}
                                 </span>
                               </>
                             ) : (
-                              <span className="text-[10px] text-slate-500">
+                              <span className="text-[10px] text-cyan-100/70">
                                 No temps yet
                               </span>
                             )}
-                            <span className="text-[9px] text-slate-500">
+                            <span className="text-[9px] text-cyan-100/70">
                               {hasData ? `${data.length} checks` : "No data"}
                             </span>
-                            <span className="text-[9px] text-slate-600">
+                            <span className="text-[9px] text-cyan-100/60">
                               {isExpanded ? "Tap to collapse" : "Tap to expand"}
                             </span>
                           </div>
@@ -470,13 +470,13 @@ export function TemperatureDashboard({ logs = [], nightTails = [] }) {
                               </ResponsiveContainer>
                             </div>
                           ) : (
-                            <div className="mt-1.5 text-[10px] text-slate-500">
+                            <div className="mt-1.5 text-[10px] text-cyan-100/70">
                               Historical graph hidden. Tap to view trend.
                             </div>
                           )
                         ) : (
                           <div className="flex-1 flex items-center justify-center">
-                            <p className="text-[11px] text-slate-500">
+                            <p className="text-[11px] text-cyan-100/70">
                               No temperature history for this tail yet.
                             </p>
                           </div>
@@ -490,18 +490,18 @@ export function TemperatureDashboard({ logs = [], nightTails = [] }) {
           </section>
 
           {/* Tonight's Aircraft overview (filtered) */}
-          <section className="rounded-2xl border border-slate-800 bg-slate-900/80 p-4 space-y-3">
+          <section className="glacier-panel p-4 space-y-3">
             <div className="flex items-center justify-between">
-              <h2 className="text-sm font-semibold text-slate-100">
+              <h2 className="text-sm font-semibold text-cyan-50">
                 Tonight&apos;s Aircraft (Filtered)
               </h2>
-              <span className="text-[11px] text-slate-500">
+              <span className="text-[11px] text-cyan-100/70">
                 {filteredNightTails.length} tails
               </span>
             </div>
             <div className="overflow-x-auto">
               <table className="min-w-full text-[11px] text-left">
-                <thead className="border-b border-slate-800 text-slate-400">
+                <thead className="border-b border-cyan-900/60 text-cyan-100/70">
                   <tr>
                     <th className="py-2 pr-3">Tail</th>
                     <th className="py-2 pr-3 hidden md:table-cell">Gate</th>
@@ -511,12 +511,12 @@ export function TemperatureDashboard({ logs = [], nightTails = [] }) {
                     <th className="py-2 pr-3">Latest Temp / Status</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-slate-800">
+                <tbody className="divide-y divide-cyan-900/60">
                   {filteredNightTails.length === 0 ? (
                     <tr>
                       <td
                         colSpan={6}
-                        className="py-4 text-center text-[11px] text-slate-500"
+                        className="py-4 text-center text-[11px] text-cyan-100/70"
                       >
                         No tails match the current filters.
                       </td>
@@ -533,8 +533,8 @@ export function TemperatureDashboard({ logs = [], nightTails = [] }) {
                       const latestTemp = getLatestTempForTail(t.tail);
 
                       return (
-                        <tr key={t.id} className="hover:bg-slate-800/40">
-                          <td className="py-2 pr-3 text-slate-100">
+                    <tr key={t.id} className="hover:bg-slate-900/50">
+                          <td className="py-2 pr-3 text-cyan-50">
                             {t.tail}
                           </td>
                           <td className="py-2 pr-3 hidden md:table-cell">
@@ -544,7 +544,7 @@ export function TemperatureDashboard({ logs = [], nightTails = [] }) {
                             {t.heatSource || "—"}
                           </td>
                           <td className="py-2 pr-3">
-                            <span className="text-[11px] text-slate-200">
+                            <span className="text-[11px] text-cyan-100">
                               {purgeLabel}
                             </span>
                           </td>
@@ -554,7 +554,7 @@ export function TemperatureDashboard({ logs = [], nightTails = [] }) {
                           <td className="py-2 pr-3">
                             {latestTemp ? (
                               <div className="flex flex-col gap-0.5">
-                                <span className="text-slate-100">
+                                <span className="text-cyan-50">
                                   {typeof latestTemp.temp === "number"
                                     ? `${latestTemp.temp.toFixed(0)}°F`
                                     : latestTemp.temp}
@@ -565,7 +565,7 @@ export function TemperatureDashboard({ logs = [], nightTails = [] }) {
                                 />
                               </div>
                             ) : (
-                              <span className="text-slate-500 text-[11px]">
+                              <span className="text-cyan-100/70 text-[11px]">
                                 No temp logged
                               </span>
                             )}
@@ -580,18 +580,18 @@ export function TemperatureDashboard({ logs = [], nightTails = [] }) {
           </section>
 
           {/* Recent logs list (filtered) */}
-          <section className="rounded-2xl border border-slate-800 bg-slate-900/80 p-4 space-y-3">
+          <section className="glacier-panel p-4 space-y-3">
             <div className="flex items-center justify-between">
-              <h2 className="text-sm font-semibold text-slate-100">
+              <h2 className="text-sm font-semibold text-cyan-50">
                 Recent Temperature Logs (Filtered)
               </h2>
-              <span className="text-[11px] text-slate-500">
+              <span className="text-[11px] text-cyan-100/70">
                 Showing {latestLogs.length} of {filteredLogs.length}
               </span>
             </div>
             <div className="overflow-x-auto">
               <table className="min-w-full text-[11px] text-left">
-                <thead className="border-b border-slate-800 text-slate-400">
+                <thead className="border-b border-cyan-900/60 text-cyan-100/70">
                   <tr>
                     <th className="py-2 pr-3">Tail</th>
                     <th className="py-2 pr-3">Temp (°F)</th>
@@ -603,12 +603,12 @@ export function TemperatureDashboard({ logs = [], nightTails = [] }) {
                     <th className="py-2 pr-3 hidden lg:table-cell">Notes</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-slate-800">
+                <tbody className="divide-y divide-cyan-900/60">
                   {latestLogs.length === 0 ? (
                     <tr>
                       <td
                         colSpan={8}
-                        className="py-4 text-center text-[11px] text-slate-500"
+                        className="py-4 text-center text-[11px] text-cyan-100/70"
                       >
                         No logs match the current filters.
                       </td>
@@ -624,7 +624,7 @@ export function TemperatureDashboard({ logs = [], nightTails = [] }) {
                           : purgeInfo.purgedDrained || "N/A"
                         : "N/A";
 
-                      let rowClass = "hover:bg-slate-800/40 border-l-2 ";
+                      let rowClass = "hover:bg-slate-900/50 border-l-2 ";
                       if (log.status === "Critical Hot") {
                         rowClass += "border-l-rose-500/80";
                       } else if (log.status === "Above Target") {
@@ -634,12 +634,12 @@ export function TemperatureDashboard({ logs = [], nightTails = [] }) {
                       } else if (log.status === "Normal") {
                         rowClass += "border-l-emerald-500/70";
                       } else {
-                        rowClass += "border-l-slate-800";
+                        rowClass += "border-l-cyan-900/70";
                       }
 
                       return (
                         <tr key={log.id} className={rowClass}>
-                          <td className="py-2 pr-3 text-slate-100">
+                          <td className="py-2 pr-3 text-cyan-50">
                             {log.tail || "—"}
                           </td>
                           <td className="py-2 pr-3">
@@ -661,7 +661,7 @@ export function TemperatureDashboard({ logs = [], nightTails = [] }) {
                             {purgeLabel}
                           </td>
                           <td className="py-2 pr-3 hidden lg:table-cell max-w-[220px]">
-                            <span className="line-clamp-2 text-slate-300">
+                            <span className="line-clamp-2 text-cyan-100/80">
                               {log.notes || "—"}
                             </span>
                           </td>
@@ -685,29 +685,29 @@ function PillStat({ label, value, tone, clickable, active, onClick }) {
   let base =
     "inline-flex items-center gap-1 rounded-full border px-2.5 py-1 text-[11px] transition cursor-default";
   let colors =
-    "bg-slate-900/80 border-slate-600 text-slate-100 hover:bg-slate-800/80";
+    "bg-slate-950/60 border-cyan-900/60 text-cyan-100 hover:bg-slate-900/70";
 
   if (tone === "sky") {
     colors =
-      "bg-sky-500/10 border-sky-500/70 text-sky-100 hover:bg-sky-500/20";
+      "bg-cyan-400/15 border-cyan-200/70 text-slate-950 hover:bg-cyan-300/30";
   } else if (tone === "amber") {
     colors =
-      "bg-amber-500/10 border-amber-500/70 text-amber-100 hover:bg-amber-500/20";
+      "bg-amber-500/10 border-amber-400/70 text-amber-50 hover:bg-amber-500/20";
   } else if (tone === "rose") {
     colors =
       "bg-rose-500/10 border-rose-500/70 text-rose-100 hover:bg-rose-500/20";
   } else if (tone === "purple") {
     colors =
-      "bg-purple-500/10 border-purple-500/70 text-purple-100 hover:bg-purple-500/20";
+      "bg-indigo-400/15 border-indigo-300/70 text-indigo-50 hover:bg-indigo-400/25";
   } else if (tone === "emerald") {
     colors =
-      "bg-emerald-500/10 border-emerald-500/70 text-emerald-100 hover:bg-emerald-500/20";
+      "bg-emerald-500/10 border-emerald-400/70 text-emerald-50 hover:bg-emerald-500/20";
   }
 
   if (clickable) {
     base += " cursor-pointer select-none";
     if (active) {
-      colors += " ring-1 ring-offset-0 ring-current";
+      colors += " ring-1 ring-offset-0 ring-cyan-200/70";
     }
   }
 
@@ -724,10 +724,10 @@ function PillStat({ label, value, tone, clickable, active, onClick }) {
 }
 
 function StatusBadge({ status }) {
-  if (!status) return <span className="text-slate-400">—</span>;
+  if (!status) return <span className="text-cyan-100/60">—</span>;
 
   let cls =
-    "inline-flex rounded-full px-2 py-0.5 border text-[11px] bg-slate-800/60 text-slate-200 border-slate-600";
+    "inline-flex rounded-full px-2 py-0.5 border text-[11px] bg-slate-900/60 text-cyan-100 border-cyan-900/60";
   if (status === "Critical Hot") {
     cls =
       "inline-flex rounded-full px-2 py-0.5 border text-[11px] bg-rose-500/10 text-rose-300 border-rose-500/70";
@@ -747,7 +747,7 @@ function StatusBadge({ status }) {
 
 function StatusMini({ status, time }) {
   if (!status) {
-    return <span className="text-[10px] text-slate-500">—</span>;
+    return <span className="text-[10px] text-cyan-100/70">—</span>;
   }
 
   let dotClass = "h-1.5 w-1.5 rounded-full ";
@@ -764,10 +764,10 @@ function StatusMini({ status, time }) {
   }
 
   return (
-    <div className="flex items-center gap-1 text-[10px] text-slate-300">
+    <div className="flex items-center gap-1 text-[10px] text-cyan-100">
       <span className={dotClass} />
       <span>{status}</span>
-      {time && <span className="text-slate-500">· {time}</span>}
+      {time && <span className="text-cyan-100/70">· {time}</span>}
     </div>
   );
 }
