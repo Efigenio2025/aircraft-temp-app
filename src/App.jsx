@@ -2,10 +2,9 @@ import React, { useState } from "react";
 import { TemperatureLogForm } from "./components/TemperatureLogForm.jsx";
 import { TemperatureDashboard } from "./components/TemperatureDashboard.jsx";
 import { NightTailLog } from "./components/NightTailLog.jsx";
-import { SupabaseExample } from "./components/SupabaseExample.jsx";
 
 export default function App() {
-  const [view, setView] = useState("log"); // "log" | "dashboard" | "night" | "supabase"
+  const [view, setView] = useState("log"); // "log" | "dashboard" | "night"
 
   // In-memory temp logs (cabin temps)
   const [logs, setLogs] = useState([]);
@@ -179,16 +178,6 @@ export default function App() {
             >
               Tonight&apos;s Aircraft
             </button>
-            <button
-              onClick={() => setView("supabase")}
-              className={`px-3 py-1.5 rounded-full border text-xs transition ${
-                view === "supabase"
-                  ? "bg-cyan-300 text-slate-950 border-cyan-100 shadow-lg shadow-cyan-500/30"
-                  : "bg-slate-900/70 border-cyan-900/60 text-slate-200 hover:bg-slate-900/90"
-              }`}
-            >
-              Supabase Demo
-            </button>
           </div>
         </div>
       </nav>
@@ -218,8 +207,6 @@ export default function App() {
             onLogTemp={handleLogTempForTail}
           />
         )}
-
-        {view === "supabase" && <SupabaseExample />}
       </main>
     </div>
   );
