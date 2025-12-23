@@ -33,18 +33,14 @@ module.exports = async function (context, req) {
         station,
         date: nightDate,
         items: (items || []).map((entity) => ({
-          id: entity.id,
-          partitionKey: `${entity.station}-${entity.night_date}`,
-          tail: entity.tail_number,
-          temp: entity.temp_f,
-          recordedAt: entity.recorded_at,
-          location: entity.location,
-          heatSource: entity.heat_source,
-          status: entity.status,
-          notes: entity.notes,
-        })),
-      },
-    };
+        id: entity.id,
+        partitionKey: `${entity.station}-${entity.night_date}`,
+        tail: entity.tail_number,
+        temp: entity.temp_f,
+        recordedAt: entity.recorded_at,
+      })),
+    },
+  };
   } catch (err) {
     context.log.error("Error in TempLogsGetTonight:", err);
     context.res = {

@@ -1,4 +1,3 @@
-const { v4: uuidv4 } = require("uuid");
 const {
   supabaseRequest,
   supabaseConfigured,
@@ -16,8 +15,7 @@ module.exports = async function (context, req) {
       return;
     }
 
-    const { tail, tailNumber, temp, location, heatSource, status, time, notes, dateOverride } =
-      req.body || {};
+    const { tail, tailNumber, temp, time, dateOverride } = req.body || {};
 
     const tailValue = (tailNumber || tail || "").toUpperCase();
     if (!tailValue || temp === undefined || temp === null) {
@@ -39,16 +37,11 @@ module.exports = async function (context, req) {
 
     const timestamp = time || new Date().toISOString();
     const payload = {
-      id: uuidv4(),
       station: DEFAULT_STATION,
       night_date: dateOverride || getTodayDateString(),
       tail_number: tailValue,
       temp_f: numericTemp,
       recorded_at: timestamp,
-      location: location || "",
-      heat_source: heatSource || "",
-      status: status || "",
-      notes: notes || "",
     };
 
     const data = await supabaseRequest("/temp_logs", {
@@ -67,10 +60,6 @@ module.exports = async function (context, req) {
         tail: saved.tail_number,
         temp: saved.temp_f,
         recordedAt: saved.recorded_at,
-        location: saved.location,
-        heatSource: saved.heat_source,
-        status: saved.status,
-        notes: saved.notes,
       },
     };
   } catch (err) {
