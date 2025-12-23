@@ -1,14 +1,13 @@
 # Aircraft Temp App
 
-A Vite + React single-page app for tracking cabin temperatures and nighttime aircraft prep. The app now uses Supabase as the backing data store for the "Supabase Demo" view and is ready to deploy to Azure Static Web Apps (or any static host).
+A Vite + React single-page app for tracking cabin temperatures and nighttime aircraft prep. The app now uses Supabase as the backing data store for the "Supabase Demo" view and is ready to deploy to Vercel (or any static host).
 
 ## Prerequisites
 - Node.js 18+
 - A Supabase project with anon and service keys
-- Optional: Azure CLI if deploying to Azure Static Web Apps
 
 ## Environment variables
-Create a `.env.local` (or configure Azure app settings) with:
+Create a `.env.local` (or set Vercel project env vars) with:
 
 ```
 VITE_SUPABASE_URL=https://<your-project>.supabase.co
@@ -67,22 +66,18 @@ npm run dev
 ```
 The Supabase demo tab will work once the environment variables are provided.
 
-## Deploying to Azure Static Web Apps
-1. Build the app locally to verify: `npm run build` (output in `dist/`).
-2. Create or reuse a Static Web App resource. Use the following settings:
-   - **App location:** `/`
-   - **Output location:** `dist`
-   - **Build command:** `npm run build`
-3. Configure the required app settings so the frontend can reach Supabase:
-   ```bash
-   az staticwebapp appsettings set \
-     --name <your-swa-name> \
-     --setting-names \
-       VITE_SUPABASE_URL=https://<your-project>.supabase.co \
-       VITE_SUPABASE_ANON_KEY=<anon-key> \
-       VITE_DEFAULT_STATION=OMA
-   ```
-4. Deploy using GitHub Actions (created automatically by Azure) or run `az staticwebapp deploy` if pushing from CI/CLI.
+## Deploying to Vercel
+1. Build locally to verify: `npm run build` (output in `dist/`).
+2. Push to GitHub and import the repo in Vercel.
+3. Set the environment variables in Vercel Project Settings → Environment Variables:
+   - `VITE_SUPABASE_URL`
+   - `VITE_SUPABASE_ANON_KEY`
+   - (optional) `VITE_DEFAULT_STATION`
+4. In the Vercel project settings, set:
+   - **Framework Preset:** Vite
+   - **Build Command:** `npm run build`
+   - **Output Directory:** `dist`
+5. Deploy. Vercel will run the build and serve the static `dist` output.
 
 ## Notes
 - The Supabase data helpers use the REST interface with the anon key; ensure your RLS policies permit the operations above.

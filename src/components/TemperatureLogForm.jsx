@@ -136,8 +136,8 @@ export function TemperatureLogForm({
   return (
     <div className="px-4 py-6">
       <div className="max-w-xl mx-auto glacier-panel p-4 space-y-4">
-        <header className="flex items-center justify-between gap-2">
-          <div>
+        <header className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+          <div className="space-y-1">
             <h2 className="text-sm font-semibold text-cyan-50">
               Log Temperature
             </h2>
@@ -146,13 +146,14 @@ export function TemperatureLogForm({
             </p>
           </div>
           {selectedAircraft && (
-            <div className="text-right text-[11px] text-cyan-100/70">
+            <div className="text-left sm:text-right text-[11px] text-cyan-100/70 sm:pt-1">
               <div className="font-semibold text-cyan-50">
                 {selectedAircraft.tail}
               </div>
-              <div>
-                {selectedAircraft.gate || "No gate"} ·{" "}
-                {selectedAircraft.heatSource || "No heat source"}
+              <div className="flex flex-wrap gap-1 sm:justify-end">
+                <span>{selectedAircraft.gate || "No gate"}</span>
+                <span>·</span>
+                <span>{selectedAircraft.heatSource || "No heat source"}</span>
               </div>
             </div>
           )}
@@ -179,7 +180,7 @@ export function TemperatureLogForm({
           </div>
 
           {/* Auto info row from prep screen */}
-          <div className="grid grid-cols-2 gap-3 text-[11px]">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-[11px]">
             <div className="glacier-card px-3 py-2">
               <div className="text-cyan-100/70">Gate / Parking</div>
               <div className="font-semibold text-cyan-50">
@@ -215,7 +216,7 @@ export function TemperatureLogForm({
           </div>
 
           {/* Mark In + Purge controls */}
-          <div className="grid grid-cols-2 gap-3 text-[11px]">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-[11px]">
             <button
               type="button"
               onClick={handleMarkInClick}
