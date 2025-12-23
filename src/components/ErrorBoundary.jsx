@@ -29,7 +29,7 @@ export class ErrorBoundary extends React.Component {
             <h1 className="text-lg font-semibold">Something went wrong</h1>
             <p className="text-sm text-cyan-100/80">
               The app hit an unexpected error. Reload the page to try again. If the issue
-              persists on Azure, confirm the build output is being served from the <code>dist</code>
+              persists on your host, confirm the build output is being served from the <code>dist</code>
               folder and that environment variables are configured for Supabase access.
             </p>
             {this.state.error?.message && (
