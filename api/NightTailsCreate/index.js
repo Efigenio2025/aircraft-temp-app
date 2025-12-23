@@ -1,4 +1,3 @@
-const { v4: uuidv4 } = require("uuid");
 const {
   supabaseRequest,
   supabaseConfigured,
@@ -36,7 +35,6 @@ module.exports = async function (context, req) {
 
     const nightDate = dateOverride || getTodayDateString();
     const payload = {
-      id: uuidv4(),
       station: DEFAULT_STATION,
       night_date: nightDate,
       tail_number: tailValue,
